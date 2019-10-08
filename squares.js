@@ -66,12 +66,17 @@ class Squares {
         for (let j = -10 ; j < 10; j += 0.5) {
           let grid_size = 1;
           let size = 0.5
-          let square = new Square(this.three_scene, i*grid_size, j*grid_size, 0.5);
+          let square = new Square(this.three_scene, i*grid_size, j*grid_size, size);
           this.squares[""+i+"_"+j] = square
         }
       }
 
-
+      this.patterns = {}
+      let wave_pattern = new WavePattern()
+      this.patterns[wave_pattern.id] = wave_pattern
+      for (let [key, square] of Object.entries(this.squares)) {
+        square.addPattern(wave_pattern)
+      }
 
      
       this.last_update_time = null;
@@ -87,6 +92,16 @@ class Squares {
     //update
     if(this.last_update_time_ms != null){
         var d_time_ms = cur_time_ms - this.last_update_time_ms
+
+        for (let [key, pattern] of Object.entries(this.patterns)) {
+          pattern.update(d_time_ms)
+          if (pattern.died()) {
+            delete(this.pattern[key])
+          }
+        }
+        for (let [key, square] of Object.entries(this.squares)) {
+          square.update(d_time_ms)
+        }
     }
     this.last_update_time_ms = cur_time_ms;
 
@@ -99,14 +114,6 @@ class Squares {
   }
 
   render() {
-
-
-    for (let [key, square] of Object.entries(this.squares)) {
-      square.mesh.rotation.x += 0.004;
-      square.mesh.rotation.y += 0.008;
-      square.mesh.rotation.z += 0.002;
-
-    }
 
     this.renderer.render(this.three_scene, this.THREEcamera)
 
