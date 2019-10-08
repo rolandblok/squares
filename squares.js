@@ -61,24 +61,29 @@ class Squares {
       
 
       // SCENE BUILD
-      this.squares = {}
-      for (let i = -10 ; i < 10; i += 0.5) {
-        for (let j = -10 ; j < 10; j += 0.5) {
-          let grid_size = 1;
-          let size = 0.5
-          let square = new Square(this.three_scene, i*grid_size, j*grid_size, size);
-          this.squares[""+i+"_"+j] = square
+      let N = 25
+      this.squares = new Array ()
+      for (let i = 0 ; i < N; i ++ ) {
+        this.squares[i] = new Array ()
+        for (let j = 0 ; j < N; j ++) {
+          let size = 0.4
+          let square = new Square(this.three_scene, -size*N/2 + i*size, -size*N/2 + j*size, size);
+          
+          this.squares[i][j] = square
+        }
+      }
+      for (let i = 0 ; i < N; i ++ ) {
+        for (let j = 0 ; j < N; j ++) {
+          let left   = (i==0) ? this.squares[N-1][j] : this.squares[i-1][j]
+          let right  = (i==N-1) ? this.squares[0][j] : this.squares[i+1][j]
+          let top    = (j==0) ? this.squares[i][N-1] : this.squares[i][j-1]
+          let bottom = (j==N-1) ? this.squares[i][0] : this.squares[i][j+1]
+          this.squares[i][j].connect(left, right, top, bottom)
         }
       }
 
-      this.patterns = {}
-      let wave_pattern = new WavePattern()
-      this.patterns[wave_pattern.id] = wave_pattern
-      for (let [key, square] of Object.entries(this.squares)) {
-        square.addPattern(wave_pattern)
-      }
+      this.squares[10][10].mesh.rotation.x += 1
 
-     
       this.last_update_time = null;
 
   }
@@ -93,15 +98,17 @@ class Squares {
     if(this.last_update_time_ms != null){
         var d_time_ms = cur_time_ms - this.last_update_time_ms
 
-        for (let [key, pattern] of Object.entries(this.patterns)) {
-          pattern.update(d_time_ms)
-          if (pattern.died()) {
-            delete(this.pattern[key])
+        for (let i = 0; i < this.squares.length; i++ ) {
+          for (let j = 0; j < this.squares[i].length; j++){
+            this.squares[i][j].update(d_time_ms)
           }
         }
-        for (let [key, square] of Object.entries(this.squares)) {
-          square.update(d_time_ms)
+        for (let i = 0; i < this.squares.length; i++ ) {
+          for (let j = 0; j < this.squares[i].length; j++){
+            this.squares[i][j].effectuate_update()
+          }
         }
+        
     }
     this.last_update_time_ms = cur_time_ms;
 
