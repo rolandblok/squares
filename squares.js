@@ -82,7 +82,8 @@ class Squares {
         }
       }
 
-      this.squares[10][10].mesh.rotation.x += 1
+      this.squares[10][10].mesh.rotation.y += 0.5
+      this.squares[10][10].mesh.rotation.x += 0.5
 
       this.last_update_time = null;
 
@@ -96,11 +97,16 @@ class Squares {
 
     //update
     if(this.last_update_time_ms != null){
-        var d_time_ms = cur_time_ms - this.last_update_time_ms
+        //var d_time_ms = cur_time_ms - this.last_update_time_ms
+        var d_time_ms = 10
 
         for (let i = 0; i < this.squares.length; i++ ) {
           for (let j = 0; j < this.squares[i].length; j++){
+            if (i == 10 & j == 10){
+              //console.log("" + this.squares[i][j].mesh.rotation.y + " " + d_time_ms)
+            }
             this.squares[i][j].update(d_time_ms)
+
           }
         }
         for (let i = 0; i < this.squares.length; i++ ) {
