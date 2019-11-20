@@ -61,7 +61,7 @@ class Squares {
       
 
       // SCENE BUILD
-      let N = 25
+      let N = 21
       this.squares = new Array ()
       for (let i = 0 ; i < N; i ++ ) {
         this.squares[i] = new Array ()
@@ -74,16 +74,24 @@ class Squares {
       }
       for (let i = 0 ; i < N; i ++ ) {
         for (let j = 0 ; j < N; j ++) {
-          let left   = (i==0) ? this.squares[N-1][j] : this.squares[i-1][j]
-          let right  = (i==N-1) ? this.squares[0][j] : this.squares[i+1][j]
-          let top    = (j==0) ? this.squares[i][N-1] : this.squares[i][j-1]
-          let bottom = (j==N-1) ? this.squares[i][0] : this.squares[i][j+1]
-          this.squares[i][j].connect(left, right, top, bottom)
+          let left_index = i==0 ? N-1 : i-1;
+          let right_index = i==N-1 ? 0 : i+1;
+          let top_index = j==0 ? N-1 : j-1;
+          let bottom_index = j==N-1 ? 0 : j+1;
+          let left   = this.squares[left_index][j]
+          let right  = this.squares[right_index][j]
+          let top    = this.squares[i][top_index]
+          let bottom = this.squares[i][bottom_index]
+          let left_bottom = this.squares[left_index][bottom_index]
+          let right_bottom = this.squares[right_index][bottom_index]
+          let left_top = this.squares[left_index][top_index]
+          let right_top = this.squares[right_index][top_index]
+          this.squares[i][j].connect(left, right, top, bottom, left_top, left_bottom, right_top, right_bottom)
         }
       }
 
-      this.squares[10][10].mesh.rotation.y += 0.5
-      this.squares[10][10].mesh.rotation.x += 0.5
+      this.squares[10][10].mesh.rotation.y += 1
+      this.squares[10][10].mesh.rotation.x += 1
 
       this.last_update_time = null;
 
